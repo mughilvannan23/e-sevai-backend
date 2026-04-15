@@ -52,8 +52,8 @@ const validateEnvironment = () => {
     process.exit(1);
   }
 
-  if (!process.env.EMAIL_HOST || !process.env.EMAIL_PORT || !process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD || !process.env.EMAIL_FROM) {
-    console.warn('Email environment variables are not fully configured. OTP emails may fail.');
+  if (!process.env.SENDGRID_API_KEY || !process.env.EMAIL_FROM) {
+    console.warn('SendGrid email configuration is not fully set. OTP emails may fail.');
   }
 };
 
