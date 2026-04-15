@@ -8,10 +8,14 @@ const createTransporter = () => {
     return nodemailer.createTransport({
       host: "smtp.sendgrid.net",
       port: 587,
+      secure: false,
       auth: {
         user: "apikey",
         pass: process.env.SENDGRID_API_KEY,
       },
+      tls: {
+        rejectUnauthorized: false
+      }
     });
   } catch (error) {
     console.error('❌ Email transporter creation failed:', error.message);
