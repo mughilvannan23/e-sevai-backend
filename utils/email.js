@@ -1,39 +1,17 @@
 const nodemailer = require('nodemailer');
 
 /**
- * Create Nodemailer transporter with proper error handling
+ * Create Nodemailer transporter with SendGrid
  */
 const createTransporter = () => {
   try {
-    // Validate required email configuration
-    const required = ['EMAIL_HOST', 'EMAIL_PORT', 'EMAIL_USER', 'EMAIL_PASSWORD'];
-    const missing = required.filter(key => !process.env[key]);
-
-    if (missing.length > 0) {
-      throw new Error(`Missing email configuration: ${missing.join(', ')}`);
-    }
-
-    // Default EMAIL_FROM if not set
-    if (!process.env.EMAIL_FROM) {
-      process.env.EMAIL_FROM = process.env.EMAIL_USER;
-    }
-
     return nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: Number(process.env.EMAIL_PORT) || 587,
-      secure: process.env.EMAIL_SECURE === 'true',
+      host: "smtp.sendgrid.net",
+      port: 587,
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
+        user: "apikey",
+        pass: process.env.SENDGRID_API_KEY,
       },
-      // Timeout settings for reliability
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 15000,
-      // Disable TLS reject unauthorized for development
-      tls: {
-        rejectUnauthorized: process.env.NODE_ENV === 'production'
-      }
     });
   } catch (error) {
     console.error('❌ Email transporter creation failed:', error.message);
