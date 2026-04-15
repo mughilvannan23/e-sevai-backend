@@ -23,7 +23,7 @@ const getAdminCredentials = () => {
 };
 
 /**
- * ✅ ADMIN LOGIN - Send OTP
+ * ✅ ADMIN LOGIN - Direct login without OTP
  */
 const adminLogin = async (req, res) => {
   try {
@@ -99,44 +99,26 @@ const adminLogin = async (req, res) => {
       });
     }
 
-    // Clear existing OTPs for this email
-    await OTP.deleteMany({ email: adminUser.email, purpose: 'login' });
+    // ✅ Password verified successfully - Generate JWT token directly
+    adminUser.lastLogin = new Date();
+    await adminUser.save();
 
-    // Generate new OTP
-    const otp = generateOTP();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+    // Generate JWT Token
+    const token = adminUser.generateAuthToken();
 
-    // Save OTP
-    const otpRecord = new OTP({
-      email: adminUser.email,
-      otp,
-      purpose: 'login',
-      expiresAt,
-      attempts: 0
-    });
-
-    await otpRecord.save();
-
-    try {
-      // Send OTP email
-      await sendOTP(adminUser.email, otp);
-    } catch (emailError) {
-      // Cleanup OTP if email failed
-      await OTP.deleteOne({ _id: otpRecord._id });
-      
-      console.error('❌ Failed to send OTP email:', emailError.message);
-      return res.status(500).json({
-        success: false,
-        message: 'Failed to send OTP. Please try again later.'
-      });
-    }
-
-    console.log(`✅ OTP generated for admin: ${otp}`);
+    console.log(`✅ Admin login successful: ${normalizedEmail}`);
 
     return res.status(200).json({
       success: true,
-      message: 'OTP sent successfully to your email',
-      email: adminUser.email
+      message: 'Login successful',
+      token,
+      user: {
+        id: adminUser._id,
+        name: adminUser.name,
+        email: adminUser.email,
+        role: adminUser.role,
+        lastLogin: adminUser.lastLogin
+      }
     });
 
   } catch (error) {

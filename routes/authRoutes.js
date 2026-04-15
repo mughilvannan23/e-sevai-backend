@@ -3,7 +3,6 @@ const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const {
   adminLogin,
-  verifyAdminOTP,
   employeeLogin,
   getProfile,
   logout
@@ -33,17 +32,6 @@ const loginValidation = [
     .withMessage('Password is required')
 ];
 
-const otpValidation = [
-  body('email')
-    .isEmail()
-    .normalizeEmail()
-    .withMessage('Please enter a valid email'),
-  body('otp')
-    .isLength({ min: 6, max: 6 })
-    .isNumeric()
-    .withMessage('OTP must be 6 digits')
-];
-
 const changePasswordValidation = [
   body('currentPassword')
     .notEmpty()
@@ -55,7 +43,6 @@ const changePasswordValidation = [
 
 // Routes
 router.post('/admin/login', loginValidation, validateRequest, adminLogin);
-router.post('/admin/verify-otp', otpValidation, validateRequest, verifyAdminOTP);
 router.post('/employee/login', loginValidation, validateRequest, employeeLogin);
 router.get('/profile', authenticate, getProfile);
 router.put('/change-password', authenticate, changePasswordValidation, validateRequest, () => {});
