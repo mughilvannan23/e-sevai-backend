@@ -28,6 +28,10 @@ const createTransporter = () => {
  */
 const sendOTP = async (email, otp) => {
   try {
+    console.log('\n📧 [EMAIL SERVICE] Sending OTP email...');
+    console.log('📬 To:', email);
+    console.log('📤 From:', process.env.EMAIL_FROM);
+    
     const transporter = createTransporter();
 
     const mailOptions = {
@@ -56,12 +60,21 @@ const sendOTP = async (email, otp) => {
       `
     };
 
+    console.log('📋 Sending mail with options:', { to: mailOptions.to, from: mailOptions.from, subject: mailOptions.subject });
+    
     const info = await transporter.sendMail(mailOptions);
-    console.log(`✅ OTP email sent successfully to ${email}, messageId: ${info.messageId}`);
+    
+    console.log(`✅ OTP email sent successfully!`);
+    console.log(`📧 Message ID: ${info.messageId}`);
+    console.log(`⏱️ Response: ${info.response}\n`);
     
     return true;
   } catch (error) {
-    console.error('❌ Failed to send OTP email:', error.message);
+    console.error('\n❌ [EMAIL ERROR] Failed to send OTP email');
+    console.error(`📛 Error Code: ${error.code}`);
+    console.error(`📝 Error Message: ${error.message}`);
+    console.error(`📍 Error Command: ${error.command}`);
+    console.error(`🔗 Full Error:`, error, '\n');
     throw new Error(`Email delivery failed: ${error.message}`);
   }
 };
@@ -71,6 +84,10 @@ const sendOTP = async (email, otp) => {
  */
 const sendWelcomeEmail = async (email, name, password) => {
   try {
+    console.log('\n📧 [EMAIL SERVICE] Sending welcome email...');
+    console.log('📬 To:', email);
+    console.log('📤 From:', process.env.EMAIL_FROM);
+    
     const transporter = createTransporter();
 
     const mailOptions = {
@@ -96,12 +113,21 @@ const sendWelcomeEmail = async (email, name, password) => {
       `
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log(`✅ Welcome email sent to ${email}`);
+    console.log('📋 Sending mail with options:', { to: mailOptions.to, from: mailOptions.from, subject: mailOptions.subject });
+    
+    const info = await transporter.sendMail(mailOptions);
+    
+    console.log(`✅ Welcome email sent successfully!`);
+    console.log(`📧 Message ID: ${info.messageId}`);
+    console.log(`⏱️ Response: ${info.response}\n`);
     
     return true;
   } catch (error) {
-    console.error('❌ Failed to send welcome email:', error.message);
+    console.error('\n❌ [EMAIL ERROR] Failed to send welcome email');
+    console.error(`📛 Error Code: ${error.code}`);
+    console.error(`📝 Error Message: ${error.message}`);
+    console.error(`📍 Error Command: ${error.command}`);
+    console.error(`🔗 Full Error:`, error, '\n');
     throw new Error(`Failed to send welcome email: ${error.message}`);
   }
 };
